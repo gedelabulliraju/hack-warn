@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRITICAL SYSTEM ALERT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Creepster&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #000;
+            color: #ff0000;
+            font-family: 'Orbitron', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+            cursor: none;
+        }
+        
+        .container {
+            position: relative;
+            padding: 20px;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .glitch {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwMDAiLz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMiUiIGhlaWdodD0iMTAwJSIgZmlsbD0icmdiYSgyNTUsIDAsIDAsIDAuMikiLz48L3N2Zz4=');
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 2;
+            animation: glitch-anim 0.3s infinite;
+        }
+        
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+            z-index: 3;
+            animation: scan 4s linear infinite;
+        }
+        
+        .warning {
+            position: relative;
+            text-align: center;
+            z-index: 10;
+            width: 90%;
+            max-width: 800px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
+        }
+        
+        h1 {
+            font-size: 4rem;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+            letter-spacing: 4px;
+            animation: blink 0.8s infinite;
+            font-family: 'Creepster', cursive;
+            color: #ff4444;
+        }
+        
+        .message {
+            font-size: 1.8rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: #ff5555;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
+        }
+        
+        .terminal {
+            background-color: rgba(30, 0, 0, 0.7);
+            border: 2px solid #ff0000;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.3rem;
+            height: 200px;
+            overflow-y: auto;
+            margin: 20px auto;
+            width: 90%;
+            text-align: left;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+        
+        .terminal-line {
+            color: #ff5555;
+            margin-bottom: 10px;
+            white-space: pre;
+        }
+        
+        .flashing {
+            animation: flash 0.5s infinite;
+        }
+        
+        .countdown {
+            font-size: 3rem;
+            margin: 20px 0;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+        }
+        
+        .blood {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwMDAiLz48ZWxsaXBzZSBjeD0iMjAlIiBjeT0iMTUlIiByeD0iNSUiIHJ5PSI4JSIgZmlsbD0icmdiYSgyNTUsIDAsIDAsIDAuMDcpIi8+PGVsbGlwc2UgY3g9IjQ1JSIgY3k9IjMwJSIgcng9IjclIiByeT0iMTIlIiBmaWxsPSJyZ2JhKDI1NSwgMCwgMCwgMC4xKSIvPjxlbGxpcHNlIGN4PSI3MCUiIGN5PSI2MCUiIHJ4PSIxMCUiIHJ5PSIxNSUiIGZpbGw9InJnYmEoMjU1LCAwLCAwLCAwLjA4KSIvPjxlbGxpcHNlIGN4PSI4NSUiIGN5PSIyNSUiIHJ4PSI2JSIgcnk9IjEwJSIgZmlsbD0icmdiYSgyNTUsIDAsIDAsIDAuMDUpIi8+PC9zdmc+');
+            pointer-events: none;
+            z-index: 4;
+        }
+        
+        .skull {
+            position: absolute;
+            font-size: 10rem;
+            opacity: 0.15;
+            z-index: 5;
+            animation: float 8s infinite ease-in-out;
+        }
+        
+        .skull-1 {
+            top: 10%;
+            left: 10%;
+        }
+        
+        .skull-2 {
+            top: 30%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+        
+        .skull-3 {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        
+        .skull-4 {
+            bottom: 15%;
+            right: 25%;
+            animation-delay: 6s;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes flash {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        @keyframes glitch-anim {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-5px); }
+            40% { transform: translateX(5px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        .noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .access-denied {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #ff5555;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
+            z-index: 6;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.5rem;
+            background-color: #ff0000;
+            margin-left: 4px;
+            animation: blink 1s infinite;
+        }
+        
+        .warning-btn {
+            background: #ff0000;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.3rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .warning-btn:hover {
+            background: #ff5555;
+            transform: scale(1.05);
+        }
+        
+        .virus-alert {
+            position: absolute;
+            font-size: 3rem;
+            animation: alert-float 3s linear infinite;
+            opacity: 0.7;
+            z-index: 7;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="noise"></div>
+        <div class="overlay"></div>
+        <div class="glitch"></div>
+        <div class="scanline"></div>
+        <div class="blood"></div>
+        
+        <div class="skull skull-1">☠</div>
+        <div class="skull skull-2">☠</div>
+        <div class="skull skull-3">☠</div>
+        <div class="skull skull-4">☠</div>
+        
+        <div class="warning">
+            <h1>SYSTEM HACKED!</h1>
+            <div class="message">
+                <p>WARNING: YOUR COMPUTER HAS BEEN COMPROMISED!</p>
+                <p>DANGEROUS MALWARE DETECTED: TROJAN-DDOS-666</p>
+            </div>
+            
+            <div class="terminal">
+                <div class="terminal-line">> SECURITY BREACH: <span class="flashing">CRITICAL</span></div>
+                <div class="terminal-line">> FIREWALL STATUS: <span class="flashing">DISABLED</span></div>
+                <div class="terminal-line">> DATA EXFILTRATION: <span class="flashing">98% COMPLETE</span></div>
+                <div class="terminal-line">> REMOTE ACCESS: <span class="flashing">ACTIVE</span></div>
+                <div class="terminal-line">> PERSONAL FILES: <span class="flashing">ENCRYPTED</span></div>
+                <div class="terminal-line">> BANKING DETAILS: <span class="flashing">COMPROMISED</span></div>
+                <div class="terminal-line">> TERMINATION SEQUENCE: <span class="flashing">INITIATED</span><span class="cursor"></span></div>
+            </div>
+            
+            <div class="countdown">
+                SYSTEM DESTRUCTION IN: <span id="timer">00:60</span>
+            </div>
+            
+            <button class="warning-btn" id="panic-btn">EMERGENCY SHUTDOWN</button>
+        </div>
+        
+        <div class="access-denied">
+            !!! ACCESS DENIED !!! &nbsp;&nbsp; !!! SECURITY BREACH !!! &nbsp;&nbsp; !!! SYSTEM FAILURE !!!
+        </div>
+    </div>
+    
+    <audio id="siren" loop>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="scream">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-horror-scream-3856.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Audio elements
+            const siren = document.getElementById('siren');
+            const scream = document.getElementById('scream');
+            
+            // Try to play siren sound with user interaction
+            function initAudio() {
+                siren.volume = 0.3;
+                scream.volume = 0.7;
+                
+                try {
+                    siren.play();
+                } catch (e) {
+                    console.log("Autoplay blocked, waiting for user interaction");
+                }
+            }
+            
+            // Start audio on any user interaction
+            document.body.addEventListener('click', function() {
+                if (siren.paused) {
+                    siren.play();
+                }
+            }, { once: true });
+            
+            // Initialize audio
+            initAudio();
+            
+            // Terminal messages
+            const terminal = document.querySelector('.terminal');
+            const messages = [
+                "> INITIATING DATA WIPE PROTOCOL",
+                "> CONNECTING TO COMMAND SERVER: 192.168.66.13",
+                "> DOWNLOADING ADDITIONAL PAYLOAD...",
+                "> ESTABLISHING PERSISTENCE MECHANISM",
+                "> ENCRYPTING USER DOCUMENTS...",
+                "> SCANNING FOR CREDENTIALS...",
+                "> BANKING DETAILS FOUND: 3 ACCOUNTS",
+                "> EXFILTRATING PERSONAL PHOTOS...",
+                "> ACTIVATING WEBCAM: SUCCESS",
+                "> MICROPHONE ACCESS: GRANTED",
+                "> TERMINAL CONTROL: LOST"
+            ];
+            
+            let messageIndex = 0;
+            
+            // Add terminal messages
+            function addTerminalMessage() {
+                if (messageIndex < messages.length) {
+                    const newLine = document.createElement('div');
+                    newLine.className = 'terminal-line';
+                    newLine.textContent = messages[messageIndex];
+                    terminal.appendChild(newLine);
+                    terminal.scrollTop = terminal.scrollHeight;
+                    messageIndex++;
+                    
+                    // Random interval for next message
+                    setTimeout(addTerminalMessage, Math.random() * 2000 + 500);
+                }
+            }
+            
+            // Start adding messages
+            setTimeout(addTerminalMessage, 1500);
+            
+            // Countdown timer
+            let seconds = 60;
+            const timerElement = document.getElementById('timer');
+            
+            function updateTimer() {
+                seconds--;
+                if (seconds < 0) {
+                    seconds = 0;
+                    timerElement.textContent = "00:00";
+                    document.body.classList.add('red-alert');
+                    return;
+                }
+                
+                const displaySeconds = seconds < 10 ? `0${seconds}` : seconds;
+                timerElement.textContent = `00:${displaySeconds}`;
+                
+                // Make the timer flash when under 10 seconds
+                if (seconds < 10) {
+                    timerElement.classList.add('flashing');
+                } else {
+                    timerElement.classList.remove('flashing');
+                }
+            }
+            
+            const timerInterval = setInterval(updateTimer, 1000);
+            
+            // Random glitch effect
+            setInterval(() => {
+                document.querySelector('.glitch').style.animation = 'none';
+                setTimeout(() => {
+                    document.querySelector('.glitch').style.animation = 'glitch-anim 0.3s infinite';
+                }, 50);
+            }, 5000);
+            
+            // Create floating virus alerts
+            function createVirusAlert() {
+                const alert = document.createElement('div');
+                alert.className = 'virus-alert';
+                alert.textContent = 'VIRUS!';
+                alert.style.left = Math.random() * 100 + '%';
+                alert.style.top = Math.random() * 100 + '%';
+                alert.style.fontSize = (Math.random() * 4 + 2) + 'rem';
+                alert.style.animationDuration = (Math.random() * 5 + 3) + 's';
+                document.body.appendChild(alert);
+                
+                setTimeout(() => {
+                    alert.remove();
+                }, 5000);
+            }
+            
+            setInterval(createVirusAlert, 1000);
+            
+            // Panic button
+            const panicBtn = document.getElementById('panic-btn');
+            panicBtn.addEventListener('click', function() {
+                // Play scream sound
+                scream.play();
+                
+                // Visual effects
+                document.body.style.backgroundColor = '#ff0000';
+                document.querySelector('.warning').style.borderColor = '#000';
+                document.querySelector('.warning').style.boxShadow = '0 0 50px #000';
+                document.querySelector('.terminal').style.boxShadow = '0 0 30px #000';
+                panicBtn.style.background = '#000';
+                panicBtn.style.color = '#ff0000';
+                panicBtn.textContent = 'TOO LATE!';
+                panicBtn.disabled = true;
+                
+                // Add skull to button
+                panicBtn.innerHTML += ' ☠';
+                
+                // Clear timer
+                clearInterval(timerInterval);
+                timerElement.textContent = "00:00";
+                
+                // Add final message
+                const finalMsg = document.createElement('div');
+                finalMsg.className = 'terminal-line flashing';
+                finalMsg.textContent = "> SYSTEM DESTRUCTION COMPLETE!";
+                terminal.appendChild(finalMsg);
+                terminal.scrollTop = terminal.scrollHeight;
+            });
+            
+            // Move cursor effect
+            document.addEventListener('mousemove', function(e) {
+                document.body.style.cursor = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
