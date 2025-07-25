@@ -11,20 +11,29 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
         body {
             background-color: #000;
             color: #ff0000;
             font-family: 'Orbitron', sans-serif;
             overflow: hidden;
-            height: 100vh;
+            min-height: 100vh;
+            min-width: 100vw;
             position: relative;
             cursor: none;
         }
-        
+
         .container {
             position: relative;
-            padding: 20px;
+            padding: 2vw;
+            min-height: 100vh;
+            min-width: 100vw;
+            width: 100vw;
             height: 100vh;
             overflow: hidden;
             display: flex;
@@ -32,63 +41,21 @@
             justify-content: center;
             align-items: center;
         }
-        
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.15),
-                rgba(0, 0, 0, 0.15) 1px,
-                transparent 1px,
-                transparent 2px
-            );
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .glitch {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwMDAiLz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMiUiIGhlaWdodD0iMTAwJSIgZmlsbD0icmdiYSgyNTUsIDAsIDAsIDAuMikiLz48L3N2Zz4=');
-            opacity: 0.3;
-            pointer-events: none;
-            z-index: 2;
-            animation: glitch-anim 0.3s infinite;
-        }
-        
-        .scanline {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: rgba(255, 0, 0, 0.5);
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
-            z-index: 3;
-            animation: scan 4s linear infinite;
-        }
-        
+
         .warning {
             position: relative;
             text-align: center;
             z-index: 10;
-            width: 90%;
+            width: 95vw;
             max-width: 800px;
-            padding: 30px;
+            padding: 2vw 2vw;
             background: rgba(0, 0, 0, 0.7);
             border: 3px solid #ff0000;
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
         }
-        
+
         h1 {
-            font-size: 4rem;
+            font-size: clamp(2rem, 8vw, 4rem);
             text-transform: uppercase;
             margin-bottom: 2rem;
             text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
@@ -97,158 +64,66 @@
             font-family: 'Creepster', cursive;
             color: #ff4444;
         }
-        
+
         .message {
-            font-size: 1.8rem;
+            font-size: clamp(1rem, 3vw, 1.8rem);
             line-height: 1.6;
             margin-bottom: 2rem;
             color: #ff5555;
             text-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
         }
-        
+
         .terminal {
             background-color: rgba(30, 0, 0, 0.7);
             border: 2px solid #ff0000;
-            padding: 20px;
+            padding: 2vw;
             font-family: 'Courier New', monospace;
-            font-size: 1.3rem;
-            height: 200px;
+            font-size: clamp(0.8rem, 2vw, 1.3rem);
+            height: 25vh;
+            max-height: 200px;
             overflow-y: auto;
-            margin: 20px auto;
-            width: 90%;
+            margin: 2vw auto;
+            width: 95vw;
+            max-width: 700px;
             text-align: left;
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
         }
-        
+
         .terminal-line {
             color: #ff5555;
             margin-bottom: 10px;
             white-space: pre;
         }
-        
+
         .flashing {
             animation: flash 0.5s infinite;
         }
-        
+
         .countdown {
-            font-size: 3rem;
+            font-size: clamp(1.5rem, 5vw, 3rem);
             margin: 20px 0;
             color: #ff0000;
             text-shadow: 0 0 10px #ff0000;
         }
-        
-        .blood {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwMDAiLz48ZWxsaXBzZSBjeD0iMjAlIiBjeT0iMTUlIiByeD0iNSUiIHJ5PSI4JSIgZmlsbD0icmdiYSgyNTUsIDAsIDAsIDAuMDcpIi8+PGVsbGlwc2UgY3g9IjQ1JSIgY3k9IjMwJSIgcng9IjclIiByeT0iMTIlIiBmaWxsPSJyZ2JhKDI1NSwgMCwgMCwgMC4xKSIvPjxlbGxpcHNlIGN4PSI3MCUiIGN5PSI2MCUiIHJ4PSIxMCUiIHJ5PSIxNSUiIGZpbGw9InJnYmEoMjU1LCAwLCAwLCAwLjA4KSIvPjxlbGxpcHNlIGN4PSI4NSUiIGN5PSIyNSUiIHJ4PSI2JSIgcnk9IjEwJSIgZmlsbD0icmdiYSgyNTUsIDAsIDAsIDAuMDUpIi8+PC9zdmc+');
-            pointer-events: none;
-            z-index: 4;
-        }
-        
-        .skull {
-            position: absolute;
-            font-size: 10rem;
-            opacity: 0.15;
-            z-index: 5;
-            animation: float 8s infinite ease-in-out;
-        }
-        
-        .skull-1 {
-            top: 10%;
-            left: 10%;
-        }
-        
-        .skull-2 {
-            top: 30%;
-            right: 15%;
-            animation-delay: 2s;
-        }
-        
-        .skull-3 {
-            bottom: 20%;
-            left: 20%;
-            animation-delay: 4s;
-        }
-        
-        .skull-4 {
-            bottom: 15%;
-            right: 25%;
-            animation-delay: 6s;
-        }
-        
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
-        }
-        
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
-        
-        @keyframes flash {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-        
-        @keyframes glitch-anim {
-            0% { transform: translateX(0); }
-            20% { transform: translateX(-5px); }
-            40% { transform: translateX(5px); }
-            60% { transform: translateX(-5px); }
-            80% { transform: translateX(5px); }
-            100% { transform: translateX(0); }
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-            100% { transform: translateY(0) rotate(0deg); }
-        }
-        
-        .noise {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.1;
-            z-index: 0;
-        }
-        
+
         .access-denied {
             position: absolute;
-            bottom: 20px;
+            bottom: 2vw;
             left: 0;
-            width: 100%;
+            width: 100vw;
             text-align: center;
-            font-size: 1.5rem;
+            font-size: clamp(1rem, 2vw, 1.5rem);
             color: #ff5555;
             text-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
             z-index: 6;
         }
-        
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 1.5rem;
-            background-color: #ff0000;
-            margin-left: 4px;
-            animation: blink 1s infinite;
-        }
-        
+
         .warning-btn {
             background: #ff0000;
             color: #000;
             border: none;
-            padding: 12px 30px;
-            font-size: 1.3rem;
+            padding: 2vw 5vw;
+            font-size: clamp(1rem, 2vw, 1.3rem);
             font-family: 'Orbitron', sans-serif;
             font-weight: bold;
             margin-top: 20px;
@@ -259,20 +134,69 @@
             transition: all 0.3s;
             z-index: 10;
         }
-        
+
         .warning-btn:hover {
             background: #ff5555;
             transform: scale(1.05);
         }
-        
+
+        /* Responsive overlays and effects */
+        .overlay, .glitch, .scanline, .blood, .noise {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+        }
+
+        .glitch { z-index: 2; opacity: 0.3; animation: glitch-anim 0.3s infinite; }
+        .scanline { z-index: 3; height: 5px; background: rgba(255,0,0,0.5); box-shadow: 0 0 10px rgba(255,0,0,0.8); animation: scan 4s linear infinite; }
+        .blood { z-index: 4; }
+        .noise { z-index: 0; opacity: 0.1; }
+        .skull { position: absolute; font-size: clamp(3rem, 10vw, 10rem); opacity: 0.15; z-index: 5; animation: float 8s infinite ease-in-out; }
+        .skull-1 { top: 10%; left: 10%; }
+        .skull-2 { top: 30%; right: 15%; animation-delay: 2s; }
+        .skull-3 { bottom: 20%; left: 20%; animation-delay: 4s; }
+        .skull-4 { bottom: 15%; right: 25%; animation-delay: 6s; }
+
         .virus-alert {
             position: absolute;
-            font-size: 3rem;
+            font-size: clamp(2rem, 6vw, 3rem);
             animation: alert-float 3s linear infinite;
             opacity: 0.7;
             z-index: 7;
             pointer-events: none;
         }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.5rem;
+            background-color: #ff0000;
+            margin-left: 4px;
+            animation: blink 1s infinite;
+        }
+
+        @media (max-width: 600px) {
+            .warning, .terminal {
+                padding: 2vw 1vw;
+                font-size: 1rem;
+            }
+            .terminal {
+                height: 20vh;
+                max-height: 120px;
+            }
+            .access-denied {
+                font-size: 1rem;
+            }
+        }
+
+        /* Animations (unchanged) */
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        @keyframes flash { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes glitch-anim { 0% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+        @keyframes float { 0% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(5deg); } 100% { transform: translateY(0) rotate(0deg); } }
     </style>
 </head>
 <body>
